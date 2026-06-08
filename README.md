@@ -98,14 +98,16 @@ Desse modo não há necessidade de anonimização/minimização dos dados.
 
 ## 4. Requisitos de dados (perguntas que a aplicação responde)
 
-a) Entre essa legislatura (2022 - 2026), quais são as 5 maiores categorias que possuem mais despesas?
+Pensando na legislatura atual (2022 - 2026) no contexto do estado da Paraíba:
 
-b) Entre essa legislatura (2022 - 2026), quais são os 5 políticos com maiores despesas?
+1. Quais são as 5 maiores categorias que possuem mais despesas?
 
-c) Entre essa legislatura (2022 - 2026), quais sãos os 5 polítcios com menores despesas?
+2. Quais são os 5 políticos com maiores despesas?
 
-d) Entre essa legislatura (2022 - 2026), quais são os 5 principais fornecedores?
+3. Quais sãos os 5 políticos com menores despesas?
 
-e) Entre essa legislatura (2022 - 2026), a média da cota parlamentar da Paraíba é menor ou maior do quê a cota nacional?
+4. Quais são os 5 principais fornecedores?
 
-f) Entre essa legislatura (2022 - 2026) qual foi o ano com maior despesa?
+5. A média da cota parlamentar da Paraíba é menor ou maior do quê a cota nacional?
+
+6. Qual foi o ano com maior despesa?
