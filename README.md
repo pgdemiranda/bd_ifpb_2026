@@ -1,7 +1,7 @@
 # Projeto da Disciplina de Banco de Dados - PPGTI/IFPB 2026.1
 
 <div align="right">
-  <strong>Aderaldo Carvalho de Melo Neto</strong> ()<br>
+  <strong>Aderaldo Carvalho de Melo Neto</strong> (aderaldo.carvalho@academico.ifpb.edu.br)<br>
   <strong>Pablo Gomes de Miranda</strong> (pablo.miranda@academico.ifpb.edu.br)
 </div>
 
@@ -28,15 +28,70 @@ Atualmente, observa-se um descompasso no acompanhamento da atuação parlamentar
 
 ### Solução proposta
 
-A extração de dados é feita à partir da ingestão dados públicos disponibilizados pelo portal de dados abertos da Câmara dos Deputados via API RESTful. Os dados são armazenados no MongoDB em uma camada *staging*, transformados em uma camada *dimension* e servidos à partir de uma camada *fact* para um dashboard, que é gerido utilizando Metabase que serve também para servir cards e gráficos aos usuários finais.
+A extração de dados é feita à partir da ingestão dados públicos disponibilizados pelo portal de [Dados Abertos da Câmara dos Deputados](https://dadosabertos.camara.leg.br) via API RESTful. Os dados são armazenados no MongoDB em uma camada *staging*, transformados em uma camada *dimension* e servidos à partir de uma camada *fact* para um dashboard, que é gerido utilizando Metabase que serve também para servir cards e gráficos aos usuários finais.
 
 ### Por que documentos/MongoDB?
 
 Escolhemos o MongoDB porque os dados de gastos públicos que consumimos via API são flexíveis e mudam com frequência, com campos opcionais ou aninhados. Ao invés de prepararmos diferentes *joins* para montar o histórico de um deputado, o modelo de documentos salva tudo o que precisamos em um único registro JSON/BSON. Isso deixa a gravação dos dados mais rápida na camada de *staging* e também agiliza as consultas que alimentam o nosso dashboard final.
 
-## 3. Entendimento da Fonte de Dados -> FAZER
+## 3. Entendimento da Fonte de Dados
 
-a. Fonte: origem (API, open data, web scraping, arquivo, etc.), forma de acesso e licença/uso.
-b. Aspectos legais/éticos: se houver dado pessoal, registre o tratamento à luz da LGPD (base legal, anonimização/minimização). Se não houver, declare explicitamente.
-c. Metadados descritivos: volume, formato, frequência de atualização, idioma, fonte original.
-d. Dicionário de dados (metadados estruturais) — tabela campo | tipo | descrição | exemplo.
+### a. Fonte
+
+Os dados públicos utilizados são consumidos a partir do portal [Dados Abertos da Câmara dos Deputados](https://dadosabertos.camara.leg.br). A ingestão ocorre por meio do endpoint central [https://dadosabertos.camara.leg.br/api/v2](https://dadosabertos.camara.leg.br/api/v2), que implementa uma arquitetura RESTful e oferece suporte aos formatos JSON e XML. Para fins de engenharia de dados e controle de tráfego, a API adota uma paginação padrão com retorno de 15 itens por página e um limite máximo de 100 registros por requisição. Em relação à propriedade intelectual e governança, o portal não especifica uma licença de uso restritiva (como Creative Commons), caracterizando os ativos estritamente como dados públicos de livre acesso. O fornecimento gratuito visa incentivar a sociedade civil, pesquisadores e desenvolvedores a construírem soluções que promovam a transparência sobre votações, atuação parlamentar e o monitoramento de gastos reembolsados com recursos públicos.
+
+### b. Aspectos legais/éticos
+
+O portal deixa claro que não há dados pessoais dos deputados na sessão de *FAQ* conforme disponibilizamos abaixo:
+
+"Os dados abertos incluem as informações pessoais de parlamentares e colaboradores? Não, pelo menos por enquanto. Existem restrições às informações que podem ser divulgadas, especialmente as de caráter pessoal e/ou familiar. O Ato da Mesa 45/2012 é atualmente o principal dos marcos regulatórios da Câmara que definem quais informações podem ser tornadas públicas ou não" (https://dadosabertos.camara.leg.br/faq/faq-home.html#r5 acesso em 7 de junho de 2026).
+
+Desse modo não há necessidade de anonimização/minimização dos dados.
+
+### c. Metadados descritivos: volume, formato, frequência de atualização, idioma, fonte original.
+
+- Volume: ?
+
+- Formato: JSON ou XML;
+
+- Frequência de Atualização: ?;
+
+- Idioma: Português;
+
+- Fonte original: segundo FAQ, "diretamente das bases de dados que são alimentadas por diversos sistemas de uso interno da Câmara" (https://dadosabertos.camara.leg.br/faq/faq-home.html#r5 acesso em 7 de junho de 2026).
+
+### d. Dicionário de dados
+
+#### Coleção: `deputados` (Dados Cadastrais e Perfil)
+
+| Campo | Tipo | Descrição | Exemplo |
+| :--- | :--- | :--- | :--- |
+| `_id` | Integer | Identificador único do deputado na Câmara (Chave Primária). | `178910` |
+| `nome` | String | Nome civil completo do parlamentar. | `Aguinaldo Ribeiro` |
+| `nomeEleitoral` | String | Nome formato de urna utilizado pelo político. | `AGUINALDO RIBEIRO` |
+| `siglaPartido` | String | Sigla do partido político atual do deputado. | `PP` |
+| `siglaUf` | String | Estado (Unidade da Federação) que o elegeu. | `PB` |
+| `idLegislatura` | Integer | Identificador da legislatura corrente. | `57` |
+| `urlFoto` | String | Link direto para a imagem oficial do parlamentar. | `https://www.camara.leg.br/internet/deputado/bandera/178910.jpg` |
+| `email` | String | Endereço de e-mail institucional oficial. | `dep.aguinaldoribeiro@camara.leg.br` |
+| `profissoes` | Array (String) | Lista de profissões declaradas pelo parlamentar. | `["Engenheiro Civil", "Administrador"]` |
+
+---
+
+#### Coleção: `despesas` (Histórico de Gastos e Reembolsos)
+
+| Campo | Tipo | Descrição | Exemplo |
+| :--- | :--- | :--- | :--- |
+| `_id` | ObjectId | Identificador único do registro gerado automaticamente pelo MongoDB. | `66637ef89a1c2d3e4f5a6b7c` |
+| `deputadoId` | Integer | ID de referência do deputado que gerou a despesa (Chave Estrangeira). | `178910` |
+| `ano` | Integer | Ano em que a despesa foi realizada. | `2026` |
+| `mes` | Integer | Mês em que a despesa foi realizada. | `5` |
+| `tipoDespesa` | String | Categoria/Classificação do gasto efetuado. | `COMBUSTÍVEIS E LUBRIFICANTES` |
+| `dataEmissao` | String (Date) | Data de emissão do documento fiscal (padrão ISO 8601). | `2026-05-20` |
+| `numDocumento` | String | Número da nota fiscal, recibo ou comprovante do gasto. | `459821` |
+| `nomeFornecedor` | String | Razão social ou nome do fornecedor/prestador do serviço. | `POSTO TAMBAU LTDA` |
+| `cnpjCpfFornecedor` | String | Inscrição do CNPJ ou CPF do fornecedor emitente. | `00123456000189` |
+| `valorDocumento` | Double | Valor bruto total registrado na nota fiscal. | `250.50` |
+| `valorGlosa` | Double | Valor retido ou rejeitado pela auditoria da Câmara. | `0.00` |
+| `valorLiquido` | Double | Valor efetivamente reembolsado ao parlamentar. | `250.50` |
+| `urlDocumento` | String | Link para o documento digitalizado (quando disponível). | `https://www.camara.leg.br/cota-parlamentar/doc/123.pdf` |
