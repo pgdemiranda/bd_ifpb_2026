@@ -95,3 +95,17 @@ Desse modo não há necessidade de anonimização/minimização dos dados.
 | `valorGlosa` | Double | Valor retido ou rejeitado pela auditoria da Câmara. | `0.00` |
 | `valorLiquido` | Double | Valor efetivamente reembolsado ao parlamentar. | `250.50` |
 | `urlDocumento` | String | Link para o documento digitalizado (quando disponível). | `https://www.camara.leg.br/cota-parlamentar/doc/123.pdf` |
+
+## 4. Requisitos de dados (perguntas que a aplicação responde)
+
+a) Entre essa legislatura (2022 - 2026), quais são as 5 maiores categorias que possuem mais despesas?
+
+b) Entre essa legislatura (2022 - 2026), quais são os 5 políticos com maiores despesas?
+
+c) Entre essa legislatura (2022 - 2026), quais sãos os 5 polítcios com menores despesas?
+
+d) Entre essa legislatura (2022 - 2026), quais são os 5 principais fornecedores?
+
+e) Entre essa legislatura (2022 - 2026), a média da cota parlamentar da Paraíba é menor ou maior do quê a cota nacional?
+
+f) Entre essa legislatura (2022 - 2026) qual foi o ano com maior despesa?
