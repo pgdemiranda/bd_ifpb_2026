@@ -111,3 +111,9 @@ Pensando na legislatura atual (2022 - 2026) no contexto do estado da Paraíba:
 5. A média da cota parlamentar da Paraíba é menor ou maior do quê a cota nacional?
 
 6. Qual foi o ano com maior despesa?
+
+## 5. Modelo Conceitual (UML)
+
+Segue o modelo conceitual em diagrama de classes UML que vai nortear o nosso mapeamento para o MongoDB:
+
+![Modelo Conceitual UML](./img/1.png)
