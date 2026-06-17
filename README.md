@@ -117,3 +117,65 @@ Pensando na legislatura atual (2022 - 2026) no contexto do estado da Paraíba:
 Segue o modelo conceitual em diagrama de classes UML que vai nortear o nosso mapeamento para o MongoDB:
 
 ![Modelo Conceitual UML](./img/1.png)
+
+## 6. Projeto do banco orientado a documentos (mapeamento)
+
+**Quadro A — Correspondência conceito ↔ dado coletado**
+
+Classe / Propriedade      Metadado na Fonte                          Tipo Geral
+
+Deputado.id               id do deputado                                integer
+Deputado.nome             nome do deputado                              string
+Deputado.siglaPartido     sigla do partido do deputado                  string
+Deputado.siglaUf          unidade federativa representada               string
+Deputado.email            email do deputado                             string
+Deputado.profissoes       profissões exercidas                          string
+
+
+Despesa.id                 id da despesa                                integer
+Despesa.ano                ano da deputado                              integer
+Despesa.mes                mês referente da despesa deputado            integer
+Despesa.tipoDeDespesa      classificação da despesa                     string
+Despesa.numDocumento       número do documento fiscal                   integer
+Despesa.urlDocumento       url do documento                             string
+
+Valores.documento          valor total registrado                       double
+Valores.glosa             valor que foi descontado                     double
+Valores.liquido           valor efetivamente pago                      double
+
+Fornecedor.cnpjCpf         cnpj ou cpf do fornecedor                    string
+Fornecedor.nome            nome do fornecedor                           string
+
+**Quadro B — Mapeamento para o MongoDB**
+
+Elemento (modelo)  Tipo no Modelo Conceitual     Implementação no MongoDB        Observação
+
+
+Deputado              Classe              Coleção           Coleção principal contendo os dados cadastrais dos deputados
+Deputado.id           Atributo simples    Campo simples            -
+Deputado.nome         Atributo simples    Campo simples     Obrigatório
+Deputado.siglaPartido Atributo simples    Campo simples     Obrigatório
+Deputado.siglaUf      Atributo simples    Campo simples     Obrigatório
+Deputado.email        Atributo simples    Campo simples     Opcional
+Deputado.profissoes   Multivalorado       Array de Strings  Obrigatório
+
+Despesa               Classe              Coleção           Coleção contendo os dados das despesas
+Despesa.id            Atributo simples     Campo simples       -
+Despesa.ano           Atributo simples     Campo simples    Obrigatório
+Despesa.mes           Atributo simples     Campo simples    Obrigatório
+Despesa.tipoDeDespesa Atributo simples     Campo simples    Obrigatório
+Despesa.numDocumento  Atributo simples     Campo simples    Opcional
+Despesa.urlDocumento  Atributo simples     Campo simples    Opcional
+
+Deputado → Despesa    Associação            Referência (idDeputado + $lookup)  -
+
+Valores               Classe dependente    Doc embutido   
+Valores.documento     Atributo simples     Campo simples     Obrigatório
+Valores.glosa         Atributo simples     Campo simples     Obrigatório
+Valores.liquido       Atributo simples     Campo simples     Obrigatório
+
+Fornecedor            Classe dependente    Doc embutido   
+Fornecedor.cnpjCpf     Atributo simples     Campo simples     Obrigatório
+Fornecedor.nome     Atributo simples        Campo simples     Obrigatório
+
+                                                                               
