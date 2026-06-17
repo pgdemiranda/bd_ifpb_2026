@@ -122,60 +122,57 @@ Segue o modelo conceitual em diagrama de classes UML que vai nortear o nosso map
 
 **Quadro A — Correspondência conceito ↔ dado coletado**
 
-Classe / Propriedade      Metadado na Fonte                          Tipo Geral
-
-Deputado.id               id do deputado                                integer
-Deputado.nome             nome do deputado                              string
-Deputado.siglaPartido     sigla do partido do deputado                  string
-Deputado.siglaUf          unidade federativa representada               string
-Deputado.email            email do deputado                             string
-Deputado.profissoes       profissões exercidas                          string
-
-
-Despesa.id                 id da despesa                                integer
-Despesa.ano                ano da deputado                              integer
-Despesa.mes                mês referente da despesa deputado            integer
-Despesa.tipoDeDespesa      classificação da despesa                     string
-Despesa.numDocumento       número do documento fiscal                   integer
-Despesa.urlDocumento       url do documento                             string
-
-Valores.documento          valor total registrado                       double
-Valores.glosa             valor que foi descontado                     double
-Valores.liquido           valor efetivamente pago                      double
-
-Fornecedor.cnpjCpf         cnpj ou cpf do fornecedor                    string
-Fornecedor.nome            nome do fornecedor                           string
+| Classe / Propriedade | Metadado na Fonte | Tipo Geral |
+| :--- | :--- | :--- |
+| **Deputado.id** | id do deputado | integer |
+| **Deputado.nome** | nome do deputado | string |
+| **Deputado.siglaPartido** | sigla do partido do deputado | string |
+| **Deputado.siglaUf** | unidade federativa representada | string |
+| **Deputado.email** | email do deputado | string |
+| **Deputado.profissoes** | profissões exercidas | string |
+| | | |
+| **Despesa.id** | id da despesa | ObjectId |
+| **Despesa.ano** | ano da despesa | integer |
+| **Despesa.mes** | mês referente da despesa | integer |
+| **Despesa.tipoDeDespesa** | classificação da despesa | string |
+| **Despesa.numDocumento** | número do documento fiscal | string |
+| **Despesa.urlDocumento** | url do documento | string |
+| | | |
+| **Valores.documento** | valor total registrado | double |
+| **Valores.glosa** | valor que foi descontado | double |
+| **Valores.liquido** | valor efetivamente pago | double |
+| | | |
+| **Fornecedor.cnpjCpf** | cnpj ou cpf do fornecedor | string |
+| **Fornecedor.nome** | nome do fornecedor | string |
 
 **Quadro B — Mapeamento para o MongoDB**
 
-Elemento (modelo)  Tipo no Modelo Conceitual     Implementação no MongoDB        Observação
-
-
-Deputado              Classe              Coleção           Coleção principal contendo os dados cadastrais dos deputados
-Deputado.id           Atributo simples    Campo simples            -
-Deputado.nome         Atributo simples    Campo simples     Obrigatório
-Deputado.siglaPartido Atributo simples    Campo simples     Obrigatório
-Deputado.siglaUf      Atributo simples    Campo simples     Obrigatório
-Deputado.email        Atributo simples    Campo simples     Opcional
-Deputado.profissoes   Multivalorado       Array de Strings  Obrigatório
-
-Despesa               Classe              Coleção           Coleção contendo os dados das despesas
-Despesa.id            Atributo simples     Campo simples       -
-Despesa.ano           Atributo simples     Campo simples    Obrigatório
-Despesa.mes           Atributo simples     Campo simples    Obrigatório
-Despesa.tipoDeDespesa Atributo simples     Campo simples    Obrigatório
-Despesa.numDocumento  Atributo simples     Campo simples    Opcional
-Despesa.urlDocumento  Atributo simples     Campo simples    Opcional
-
-Deputado → Despesa    Associação            Referência (idDeputado + $lookup)  -
-
-Valores               Classe dependente    Doc embutido   
-Valores.documento     Atributo simples     Campo simples     Obrigatório
-Valores.glosa         Atributo simples     Campo simples     Obrigatório
-Valores.liquido       Atributo simples     Campo simples     Obrigatório
-
-Fornecedor            Classe dependente    Doc embutido   
-Fornecedor.cnpjCpf     Atributo simples     Campo simples     Obrigatório
-Fornecedor.nome     Atributo simples        Campo simples     Obrigatório
-
+| Elemento (modelo) | Tipo no Modelo Conceitual | Implementação no MongoDB | Observação |
+| :--- | :--- | :--- | :--- |
+| **Deputado** | Classe | Coleção | Coleção principal contendo os dados cadastrais dos deputados |
+| Deputado.id | Atributo simples | Campo simples | - |
+| Deputado.nome | Atributo simples | Campo simples | Obrigatório |
+| Deputado.siglaPartido | Atributo simples | Campo simples | Obrigatório |
+| Deputado.siglaUf | Atributo simples | Campo simples | Obrigatório |
+| Deputado.email | Atributo simples | Campo simples | Opcional |
+| Deputado.profissoes | Multivalorado | Array de Strings | Obrigatório |
+| | | | |
+| **Despesa** | Classe | Coleção | Coleção contendo os dados das despesas |
+| Despesa.id | Atributo simples | Campo simples | - |
+| Despesa.ano | Atributo simples | Campo simples | Obrigatório |
+| Despesa.mes | Atributo simples | Campo simples | Obrigatório |
+| Despesa.tipoDeDespesa | Atributo simples | Campo simples | Obrigatório |
+| Despesa.numDocumento | Atributo simples | Campo simples | Opcional |
+| Despesa.urlDocumento | Atributo simples | Campo simples | Opcional |
+| | | | |
+| **Deputado → Despesa** | Associação | Referência (idDeputado + $lookup) | Relacionamento entre as coleções |
+| | | | |
+| **Valores** | Classe dependente | Doc embutido | Embutido no documento de Despesa |
+| Valores.documento | Atributo simples | Campo simples | Obrigatório |
+| Valores.glosa | Atributo simples | Campo simples | Obrigatório |
+| Valores.liquido | Atributo simples | Campo simples | Obrigatório |
+| | | | |
+| **Fornecedor** | Classe dependente | Doc embutido | Embutido no documento de Despesa |
+| Fornecedor.cnpjCpf | Atributo simples | Campo simples | Obrigatório |
+| Fornecedor.nome | Atributo simples | Campo simples | Obrigatório |
                                                                                
