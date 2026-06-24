@@ -12,6 +12,7 @@ colecao_despesas = db["despesas"]
 colecao_deputados.delete_many({})
 colecao_despesas.delete_many({})
 
+
 url_deputados = "https://dadosabertos.camara.leg.br/api/v2/deputados"
 parametros = {
     "siglaUf": "PB",
@@ -68,24 +69,21 @@ for dado in dados:
         for despesa in despesas:
             
             documento_despesa = {
-                # O id da despesa será gerado automaticamente como ObjectId pelo Mongo
+                
                 "ano": despesa.get('ano'),
                 "mes": despesa.get('mes'),
                 "tipoDespesa": despesa.get('tipoDespesa'),
                 "numDocumento": despesa.get('codDocumento'),     
                 "urlDocumento": despesa.get('urlDocumento'),
                 
-                # Referência pura ao ID do deputado (linha de associação 1..*)
                 "deputado_id": id_deputado,
 
-                # Agregação: Valores (documento, glosa, liquido)
                 "valores": {
                     "documento": despesa.get('valorLiquido', 0) + despesa.get('valorGlosa', 0), 
                     "glosa": despesa.get('valorGlosa', 0),  
                     "liquido": despesa.get('valorLiquido', 0)
                 },
 
-                # Agregação: Fornecedor (cnpjCpf, nome)
                 "fornecedor": {
                     "cnpjCpf": despesa.get('cnpjCpfFornecedor'),
                     "nome": despesa.get('nomeFornecedor')
