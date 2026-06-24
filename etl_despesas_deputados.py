@@ -1,21 +1,22 @@
 import requests
 from pymongo import MongoClient
 
-# 1. Configuração da conexão com o MongoDB Local (Docker)
 CONN_STRING = "mongodb://admin:admin@localhost:27017/"
 client = MongoClient(CONN_STRING)
 
-# 2. Definição do Banco de Dados e da Coleção
 db = client["dados_camara"]
-colecao_despesas = db["despesas_deputados"]
 
-# 3. Configuração da requisição inicial (Deputados da Paraíba na 57ª Legislatura)
+colecao_deputados = db["deputados"]
+colecao_despesas = db["despesas"]
+
+colecao_deputados.delete_many({})
+colecao_despesas.delete_many({})
+
 url_deputados = "https://dadosabertos.camara.leg.br/api/v2/deputados"
 parametros = {
     "siglaUf": "PB",
     "idLegislatura": 57
 }
-
 
 resposta = requests.get(url_deputados, params=parametros)
 
@@ -35,6 +36,15 @@ for dado in dados:
     sigla_uf = dado['siglaUf']
     url_foto = dado['urlFoto']
     email = dado.get('email', '') 
+
+    documento_deputado = {
+        "_id": id_deputado,  
+        "nome": nome_deputado,
+        "siglaPartido": dado['siglaPartido'],
+        "siglaUf": dado['siglaUf'],
+        "email": dado.get('email', '')
+    }
+    colecao_deputados.insert_one(documento_deputado)
 
     print(f"Iniciando a extração de despesas do deputado(a): {nome_deputado} )")
 
@@ -58,38 +68,30 @@ for dado in dados:
         for despesa in despesas:
             
             documento_despesa = {
+                # O id da despesa será gerado automaticamente como ObjectId pelo Mongo
                 "ano": despesa.get('ano'),
                 "mes": despesa.get('mes'),
                 "tipoDespesa": despesa.get('tipoDespesa'),
                 "numDocumento": despesa.get('codDocumento'),     
                 "urlDocumento": despesa.get('urlDocumento'),
-
                 
+                # Referência pura ao ID do deputado (linha de associação 1..*)
+                "deputado_id": id_deputado,
+
+                # Agregação: Valores (documento, glosa, liquido)
                 "valores": {
                     "documento": despesa.get('valorLiquido', 0) + despesa.get('valorGlosa', 0), 
                     "glosa": despesa.get('valorGlosa', 0),  
                     "liquido": despesa.get('valorLiquido', 0)
                 },
 
-               
+                # Agregação: Fornecedor (cnpjCpf, nome)
                 "fornecedor": {
                     "cnpjCpf": despesa.get('cnpjCpfFornecedor'),
                     "nome": despesa.get('nomeFornecedor')
-                },
-
-                
-                "deputado": {
-                    "id": id_deputado,
-                    "nome": nome_deputado,
-                    "siglaPartido": sigla_partido,
-                    "siglaUf": sigla_uf,
-                    "email": email
                 }
             }
-            
-            
             colecao_despesas.insert_one(documento_despesa)
-            print("Dados adicionados!")
 
        
         links = json_despesas.get('links', [])
